@@ -1,28 +1,58 @@
 // we simulate getting data from DB/SERVER/API
 function getDataFromDB() {
-  return [
-    { id: '1', title: 'JS is amazing', body: 'JS is amazing and so easy to learn. I like it a lot!', author: 'CB' },
-    {
-      id: '2',
-      title: 'DOM manipulation is easy',
-      body:
-        'DOM Manipulation using JS is straightforward and fun! You can intercept user actions and change things in the HTML and also in CSS.',
-      author: 'Anonymous',
-    },
-    {
-      id: '3',
-      title: 'CSS is nice',
-      body: 'To style your HTML page is so much fun! I like playing with colosand images!',
-      author: 'AB',
-    },
-    {
-      id: '4',
-      title: 'Ana are mere',
-      body: 'this is my awesome comment',
-      author: 'John',
-    },
-  ];
-}
+  //***** How it was - DATABASE SIMULATION LIST COMMENS - ************/
+  // return [
+  //   { id: '1', title: 'JS is amazing', body: 'JS is amazing and so easy to learn. I like it a lot!', author: 'CB' },
+  //   {
+  //     id: '2',
+  //     title: 'DOM manipulation is easy',
+  //     body:
+  //       'DOM Manipulation using JS is straightforward and fun! You can intercept user actions and change things in the HTML and also in CSS.',
+  //     author: 'Anonymous',
+  //   },
+  //   {
+  //     id: '3',
+  //     title: 'CSS is nice',
+  //     body: 'To style your HTML page is so much fun! I like playing with colosand images!',
+  //     author: 'AB',
+  //   },
+  //   {
+  //     id: '4',
+  //     title: 'Ana are mere',
+  //     body: 'this is my awesome comment',
+  //     author: 'John',
+  //   },
+  // ];
+  //*******************************************************************/
+
+  //*** Using the fetch function, taking the comments from JSON placeholder ***/
+  var root = 'https://jsonplaceholder.typicode.com';
+
+  fetch(root + '/comments?_limit=20&fbclid=IwAR1BDF_b9Q5SE1qmqamofcLDPEGALEihM2_vyW3ptu4RuxzT3CE575QtjaA', {  
+    method: 'GET'
+  })
+    .then(function(response){
+      return response.json();
+    })
+    .then(function(jsonResp){
+      console.log(jsonResp);
+      var comment = jsonResp;
+      return comment;
+    })
+    //**** List the comments only after the database commens are loaded ****/
+    .then(function listComments(jsonResp) {
+      for (var i = 0; i < jsonResp.length; i++) {
+        var comment = jsonResp[i];
+        console.log(comment);
+    
+        var $article = createCommentElement(comment.name, comment.body, comment.email, i);
+    
+        // parent.appendChild(element) will insert element at the end of parent
+        $comments.appendChild($article);
+      }
+    })
+  }
+//***************************************************************************/
 
 // We set a convention
 // All variables that container a DOM element
@@ -111,17 +141,6 @@ console.log($deleteBtn);
 
 //**************************************************************/
 
-function listComments(comments) {
-  for (var i = 0; i < comments.length; i++) {
-    var comment = comments[i];
-    console.log(comment);
-
-    var $article = createCommentElement(comment.title, comment.body, comment.author, i);
-
-    // parent.appendChild(element) will insert element at the end of parent
-    $comments.appendChild($article);
-  }
-}
 
 var $title = document.querySelector('input[name="title"]');
 var $comment = document.querySelector('textarea[name="comment"]');
@@ -160,8 +179,6 @@ document.addEventListener('DOMContentLoaded', function () {
   // get comments from db
   var comments = getDataFromDB();
   console.log(comments);
-  // list comments in dom
-  listComments(comments);
 
   var $form = document.querySelector('form');
   $form.addEventListener('submit', addComment);
